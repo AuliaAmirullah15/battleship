@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Battleship</title>
+    <link rel="icon" href="assets/img/002-battleship-1.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <script src="https://unpkg.com/vue@next" defer></script>
+    <script src="assets/js/app.js" defer></script>
+  </head>
+  <body>
+    <header class="flex-container">
+      <div class="vertically-center">
+        <img
+          src="assets/img/002-battleship-1.png"
+          width="45"
+          height="45"
+          class="vertically-center"
+        />
+      </div>
+      <div class="vertically-center flex-center">
+        <h4>Battleship</h4>
+      </div>
+    </header>
+    <div id="game">
+      <div class="row">
+        <section id="enemy" class="healthbarWrapper">
+          <h2>Navy A2190</h2>
+          <div class="healthbar">
+            <div class="healthbar__value" :style="enemyBarStyles"></div>
+          </div>
+        </section>
+        <section id="player" class="healthbarWrapper">
+          <h2>Your Navy</h2>
+          <div class="healthbar">
+            <div class="healthbar__value" :style="playerBarStyles"></div>
+          </div>
+        </section>
+      </div>
+      <section class="section container" v-if="winner">
+        <h2>Game Over!</h2>
+        <h3 v-if="winner === 'enemy'">You lost!</h3>
+        <h3 v-else-if="winner === 'player'">You won!</h3>
+        <h3 v-else>It's a draw!</h3>
+        <button @click="startGame">Start a New Game!</button>
+      </section>
+      <section id="controls" class="fixed-bottom" v-else>
+        <button @click="attackEnemy" class="ripple">BOMB</button>
+        <button
+          :disabled="permissionSpecialAttack"
+          @click="specialAttack"
+          class="ripple"
+        >
+          CANON
+        </button>
+        <button :disabled="permissionHeal" @click="healPlayer" class="ripple">
+          REPAIR
+        </button>
+        <button @click="surrender" class="ripple">RETREAT</button>
+      </section>
+      <section id="log" class="section container battle-log" v-show="!winner">
+        <ul>
+          <li v-for="logMessage in logMessages">
+            <span
+              :class="{'log--player': logMessage.actionBy === 'player', 'log--enemy': logMessage.actionBy === 'enemy'}"
+              >{{ logMessage.actionBy === 'player' ? 'Player' : 'Enemy'}}</span
+            >
+            <span v-if="logMessage.actionType === 'heal'">
+              heals himself for
+              <span class="log--heal">{{ logMessage.actionValue }}</span></span
+            >
+            <span v-else>
+              attacks and deals
+              <span class="log--damage"> {{ logMessage.actionValue }} </span>
+            </span>
+          </li>
+        </ul>
+      </section>
+    </div>
+  </body>
+</html>
